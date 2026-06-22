@@ -33,6 +33,20 @@
         margin-bottom: 8px;
       }
       
+      /* 명언 박스 스타일 추가 */
+      .quote-section {
+        background: #fff;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-style: italic;
+        color: #555;
+        border-left: 4px solid #0050ff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        font-size: 15px;
+      }
+      
       .form-section {
         background: white;
         padding: 20px;
@@ -77,10 +91,6 @@
       
       .form-group button:hover {
         background-color: #0040cc;
-      }
-      
-      .form-group button:active {
-        background-color: #003acc;
       }
       
       .goals-list {
@@ -149,18 +159,16 @@
         padding: 40px 20px;
         color: #999;
       }
-      
-      .loading {
-        text-align: center;
-        padding: 20px;
-        color: #999;
-      }
     </style>
   </head>
   <body>
     <div class="container">
       <div class="header">
         <h1>📝 일정 관리</h1>
+      </div>
+      
+      <div id="quote" class="quote-section">
+        명언을 불러오는 중...
       </div>
       
       <div class="form-section">
