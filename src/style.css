@@ -96,3 +96,31 @@ body { margin: 0; }
 /* 나머지 기존 레이아웃 스타일들 */
 h1, h2 { font-family: var(--heading); font-weight: 500; color: var(--text-h); }
 #center { display: flex; flex-direction: column; gap: 25px; place-content: center; place-items: center; flex-grow: 1; padding: 20px; }
+/* --- 완료된 일정 시각적 구분 디자인 --- */
+
+/* 1. 항목 전체 흐림 효과 및 배경 변경 */
+.goal-item.completed {
+  opacity: 0.55; /* 투명도를 낮춰 흐리게 처리 */
+  background-color: #fafafa !important; /* 배경색을 아주 연한 회색으로 */
+  border-style: dashed; /* 테두리를 점선으로 바꾸어 '완료됨'을 암시 */
+  transition: opacity 0.3s ease, background-color 0.3s ease;
+}
+
+/* 2. 타이틀에 취소선 추가 */
+.goal-item.completed .goal-title {
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  color: #888; /* 글자색을 회색으로 */
+}
+
+/* 3. 완료 상태 버튼의 스타일 강조 */
+.goal-item.completed .goal-status {
+  background-color: #edf2f7 !important; /* 완료 상태는 부드러운 회색조 */
+  color: #718096 !important;
+  border-color: #cbd5e0 !important;
+}
+
+/* 4. 마우스 오버 시 살짝 밝아지게 (완료된 건 너무 흐리면 불편할 수 있어서) */
+.goal-item.completed:hover {
+  opacity: 0.8;
+}
