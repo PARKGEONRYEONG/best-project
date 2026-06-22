@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import flatpickr from "flatpickr";
+import Sortable from 'sortablejs'; // 1. 라이브러리 추가
 import "flatpickr/dist/flatpickr.min.css";
 
 const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
@@ -15,7 +16,8 @@ let allGoals = [];
 flatpickr("#datePicker", { dateFormat: "Y-m-d", defaultDate: new Date(), onChange: (_, dateStr) => fetchGoalsByDate(dateStr) });
 
 async function fetchGoalsByDate(date) {
-  const { data } = await supabase.from('goals').select('*').eq('created_at', date).order('created_at', { ascending: false });
+  // 2. 정렬 순서를 order_index로 변경
+  const { data } = await supabase.from('goals').select('*').eq('created_at', date).order('order_index', { ascending: true });
   allGoals = data || [];
   renderGoals();
 }
@@ -23,6 +25,22 @@ async function fetchGoalsByDate(date) {
 function renderGoals() {
   goalsContainer.innerHTML = allGoals.length === 0 ? '<div style="text-align:center; padding:20px; color:#888;">일정이 없습니다.</div>' : '';
   allGoals.forEach(goal => goalsContainer.appendChild(createGoalElement(goal)));
+  
+  // 3. 드래그 앤 드롭 기능 활성화
+  new Sortable(goalsContainer, {
+    animation: 150,
+    onEnd: async (evt) => {
+      const goalElements = Array.from(goalsContainer.children);
+      const updatedOrder = goalElements.map((el, index) => ({
+        id: allGoals[evt.oldIndex].id, // 여기는 로직에 따라 매칭 필요
+        order_index: index 
+      }));
+      // DB에 순서 업데이트
+      for (const item of updatedOrder) {
+        await supabase.from('goals').update({ order_index: item.order_index }).eq('id', item.id);
+      }
+    }
+  });
 }
 
 function createGoalElement(goal) {
@@ -63,8 +81,11 @@ async function deleteGoal(e, goalId) {
 goalForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const date = document.getElementById('datePicker').value;
-  const { data, error } = await supabase.from('goals').insert([{ title: goalInput.value, category: categorySelect.value, time: timeInput.value, is_active: true, created_at: date }]).select();
-  if (!error) { allGoals.unshift(data[0]); goalInput.value = ''; renderGoals(); }
+  // 4. 새로운 일정 추가 시 order_index 부여 (현재 개수만큼)
+  const { data, error } = await supabase.from('goals').insert([{ 
+    title: goalInput.value, category: categorySelect.value, time: timeInput.value, is_active: true, created_at: date, order_index: allGoals.length 
+  }]).select();
+  if (!error) { allGoals.push(data[0]); goalInput.value = ''; renderGoals(); }
 });
 
 document.addEventListener('DOMContentLoaded', () => { fetchGoalsByDate(new Date().toISOString().split('T')[0]); });
