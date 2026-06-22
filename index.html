@@ -12,15 +12,17 @@
       .header { margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
       .header h1 { font-size: 28px; font-weight: 700; }
       
-      /* 로그인/로그아웃 버튼 스타일 */
       #logoutBtn { padding: 8px 12px; background: #ff4d4d; color: white; border: none; border-radius: 6px; cursor: pointer; }
       
       .auth-section { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
       .auth-section input { width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 6px; }
       
+      /* 비밀번호 안내 문구 스타일 */
+      .password-help { font-size: 12px; color: #d93025; margin-bottom: 12px; text-align: center; font-weight: bold; }
+      
       .quote-section { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: center; font-style: italic; color: #555; border-left: 4px solid #0050ff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
       
-      #app-content { display: none; } /* 처음엔 숨김 */
+      #app-content { display: none; }
       
       #calendar-container { margin-bottom: 20px; }
       #datePicker { padding: 12px; width: 100%; border: 1px solid #eeeeee; border-radius: 12px; font-size: 14px; background: white; cursor: pointer; }
@@ -51,8 +53,11 @@
       </div>
 
       <div id="auth-section" class="auth-section">
-        <input type="email" id="emailInput" placeholder="이메일">
+        <input type="text" id="emailInput" placeholder="아이디(이메일 형식)">
         <input type="password" id="passwordInput" placeholder="비밀번호">
+        
+        <p class="password-help">⚠️ 비밀번호는 반드시 6자 이상이어야 합니다.</p>
+
         <button id="loginBtn" style="width:100%; padding:10px; background:#0050ff; color:white; border:none; border-radius:6px; cursor:pointer;">로그인 / 회원가입</button>
       </div>
 
