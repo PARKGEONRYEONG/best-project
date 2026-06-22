@@ -1,4 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -10,31 +12,47 @@ const timeInput = document.getElementById('timeInput');
 const categorySelect = document.getElementById('categorySelect');
 const goalsContainer = document.getElementById('goalsContainer');
 const quoteElement = document.getElementById('quote');
+const datePickerInput = document.getElementById('datePicker');
 
 let allGoals = [];
 
+// 1. 달력 초기화
+flatpickr("#datePicker", {
+  dateFormat: "Y-m-d",
+  defaultDate: new Date(),
+  onChange: function(selectedDates, dateStr) {
+    fetchGoalsByDate(dateStr);
+  }
+});
+
+// 2. 날짜별 일정 가져오기
+async function fetchGoalsByDate(date) {
+  const { data } = await supabase
+    .from('goals')
+    .select('*')
+    .eq('created_at', date) // Supabase 테이블의 날짜 컬럼 이름이 'created_at'이라고 가정합니다.
+    .order('created_at', { ascending: false });
+  
+  allGoals = data || [];
+  renderGoals();
+}
+
+// 명언, 기본 함수들
 async function fetchQuote() {
   if (!quoteElement) return;
   const quotes = [
     { text: "시작이 반이다.", author: "아리스토텔레스" },
     { text: "피할 수 없으면 즐겨라.", author: "로버트 엘리엇" },
-    { text: "고통 없는 승리는 영광이 없다.", author: "나폴레옹" },
-    { text: "기회는 일어나는 것이 아니라 만들어내는 것이다.", author: "크리스 그로서" }
+    { text: "고통 없는 승리는 영광이 없다.", author: "나폴레옹" }
   ];
   const selectedQuote = quotes[Math.floor(Math.random() * quotes.length)];
   quoteElement.innerHTML = `"${selectedQuote.text}"<br><small>- ${selectedQuote.author} -</small>`;
 }
 
-async function fetchAllGoals() {
-  const { data } = await supabase.from('goals').select('*').order('created_at', { ascending: false });
-  allGoals = data || [];
-  renderGoals();
-}
-
 function renderGoals() {
   goalsContainer.innerHTML = '';
   if (allGoals.length === 0) {
-    goalsContainer.innerHTML = '<div class="empty-state">일정이 없습니다.</div>';
+    goalsContainer.innerHTML = '<div class="empty-state" style="text-align:center; padding:20px; color:#888;">일정이 없습니다.</div>';
     return;
   }
   allGoals.forEach(goal => goalsContainer.appendChild(createGoalElement(goal)));
@@ -43,8 +61,6 @@ function renderGoals() {
 function createGoalElement(goal) {
   const div = document.createElement('div');
   div.className = `goal-item ${goal.is_active ? '' : 'completed'}`;
-  
-  // 상태와 삭제 버튼을 담는 action-box 구조
   div.innerHTML = `
     <div class="goal-content">
       <span class="goal-category">${goal.category || '기타'} | ${goal.time || '시간 미지정'}</span>
@@ -57,10 +73,7 @@ function createGoalElement(goal) {
       <button class="delete-btn">🗑️</button>
     </div>
   `;
-  
-  div.addEventListener('click', (e) => {
-    if (!e.target.classList.contains('delete-btn')) toggleGoalStatus(goal);
-  });
+  div.addEventListener('click', (e) => { if (!e.target.classList.contains('delete-btn')) toggleGoalStatus(goal); });
   div.querySelector('.delete-btn').addEventListener('click', (e) => deleteGoal(e, goal.id));
   return div;
 }
@@ -83,7 +96,9 @@ async function deleteGoal(event, goalId) {
 }
 
 async function addNewGoal(title, category, time) {
-  const { data, error } = await supabase.from('goals').insert([{ title, category, time, is_active: true }]).select();
+  // 오늘 날짜를 YYYY-MM-DD 형식으로 저장
+  const date = document.getElementById('datePicker').value;
+  const { data, error } = await supabase.from('goals').insert([{ title, category, time, is_active: true, created_at: date }]).select();
   if (error) { alert('추가 실패: ' + error.message); return false; }
   allGoals.unshift(data[0]);
   renderGoals();
@@ -102,4 +117,7 @@ goalForm.addEventListener('submit', async (e) => {
   if (success) { goalInput.value = ''; timeInput.value = ''; goalInput.focus(); }
 });
 
-document.addEventListener('DOMContentLoaded', () => { fetchQuote(); fetchAllGoals(); });
+document.addEventListener('DOMContentLoaded', () => { 
+  fetchQuote(); 
+  fetchGoalsByDate(new Date().toISOString().split('T')[0]); 
+});
