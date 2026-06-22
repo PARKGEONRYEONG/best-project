@@ -2,7 +2,6 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>일정 관리</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -11,10 +10,9 @@
       body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f8f8; padding: 20px; }
       .container { max-width: 600px; margin: 0 auto; }
       .header { margin-bottom: 24px; }
-      .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-      .quote-section { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 10px; text-align: center; font-style: italic; color: #555; border-left: 4px solid #0050ff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); font-size: 15px; }
+      .header h1 { font-size: 28px; font-weight: 700; }
+      .quote-section { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: center; font-style: italic; color: #555; border-left: 4px solid #0050ff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
       
-      /* 달력 스타일 */
       #calendar-container { margin-bottom: 20px; }
       #datePicker { padding: 12px; width: 100%; border: 1px solid #eeeeee; border-radius: 12px; font-size: 14px; background: white; cursor: pointer; }
 
@@ -22,47 +20,55 @@
       .form-group { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
       .form-group input, .form-group select { padding: 12px 16px; border: 1px solid #eeeeee; border-radius: 8px; font-size: 14px; }
       .form-group input#goalInput { flex: 2; }
-      .form-group input#timeInput { flex: 0.8; }
-      .form-group select { flex: 0.8; }
-      .form-group button { padding: 12px 24px; background-color: #0050ff; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+      .form-group button { padding: 12px 24px; background-color: #0050ff; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+      
       .goals-list { display: flex; flex-direction: column; gap: 8px; }
-      .goal-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; background-color: white; border: 1px solid #eeeeee; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
-      .goal-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+      .goal-item { 
+        display: flex; justify-content: space-between; align-items: center; 
+        padding: 16px; background-color: white; border: 1px solid #eeeeee; 
+        border-radius: 12px; cursor: pointer; transition: all 0.2s; 
+      }
+      
+      /* 완료된 항목 디자인 */
+      .goal-item.completed {
+        opacity: 0.5 !important;
+        background-color: #f4f4f4 !important;
+        border: 1px dashed #cccccc !important;
+      }
+      .goal-item.completed .goal-title {
+        text-decoration: line-through !important;
+        color: #999 !important;
+      }
+
       .goal-content { flex: 1; }
       .goal-category { font-size: 12px; color: #0050ff; font-weight: 600; display: block; margin-bottom: 4px; }
       .goal-title { font-size: 16px; }
-      .delete-btn { background: none; border: none; cursor: pointer; font-size: 18px; padding: 5px; }
+      
+      .action-box { display: flex; align-items: center; gap: 8px; }
+      .goal-status { font-size: 12px; color: #888; font-weight: 600; }
+      .delete-btn { 
+        background: #fff; border: 1px solid #eee; border-radius: 6px; 
+        cursor: pointer; font-size: 16px; padding: 6px 10px; 
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <div class="header"><h1>📝 일정 관리</h1></div>
       <div id="quote" class="quote-section">명언을 불러오는 중...</div>
-      
-      <div id="calendar-container">
-        <input type="text" id="datePicker" placeholder="날짜를 선택하세요" />
-      </div>
-      
+      <div id="calendar-container"><input type="text" id="datePicker" /></div>
       <div class="form-section">
         <form id="goalForm">
           <div class="form-group">
             <input type="text" id="goalInput" placeholder="일정을 입력하세요..." required />
             <input type="time" id="timeInput" /> 
-            <select id="categorySelect">
-              <option value="개인">개인</option>
-              <option value="업무">업무</option>
-              <option value="건강">건강</option>
-              <option value="학습">학습</option>
-              <option value="기타">기타</option>
-            </select>
+            <select id="categorySelect"><option>개인</option><option>업무</option><option>건강</option><option>학습</option><option>기타</option></select>
             <button type="submit">추가</button>
           </div>
         </form>
       </div>
-      
       <div id="goalsContainer" class="goals-list"></div>
     </div>
-    
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script type="module" src="/src/main.js"></script>
   </body>
