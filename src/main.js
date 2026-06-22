@@ -8,7 +8,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // 2. DOM 요소
 const goalForm = document.getElementById('goalForm');
 const goalInput = document.getElementById('goalInput');
-const timeInput = document.getElementById('timeInput'); // 시간 입력 추가
+const timeInput = document.getElementById('timeInput'); 
 const categorySelect = document.getElementById('categorySelect');
 const goalsContainer = document.getElementById('goalsContainer');
 const quoteElement = document.getElementById('quote');
@@ -76,15 +76,22 @@ function renderGoals() {
 function createGoalElement(goal) {
   const div = document.createElement('div');
   div.className = `goal-item ${goal.is_active ? '' : 'completed'}`;
+  
+  // 상태 표시와 삭제 버튼을 모두 포함한 UI
   div.innerHTML = `
     <div class="goal-content">
       <span class="goal-category">${goal.category || '기타'} | ${goal.time || '시간 미지정'}</span>
       <span class="goal-title">${escapeHtml(goal.title)}</span>
     </div>
-    <button class="delete-btn" style="background:none; border:none; cursor:pointer; font-size:18px;">🗑️</button>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span class="goal-status ${goal.is_active ? 'active' : 'completed'}">
+        ${goal.is_active ? '진행 중' : '✓ 완료'}
+      </span>
+      <button class="delete-btn" style="background:none; border:none; cursor:pointer; font-size:18px;">🗑️</button>
+    </div>
   `;
   
-  // 토글 이벤트
+  // 완료 토글 이벤트 (삭제 버튼을 제외한 영역 클릭 시에만)
   div.addEventListener('click', (e) => {
     if (!e.target.classList.contains('delete-btn')) toggleGoalStatus(goal);
   });
