@@ -16,15 +16,19 @@ const logoutBtn = document.getElementById('logoutBtn');
 
 let allGoals = [];
 
-// 로그인 기능
+// 로그인 버튼 처리
 document.getElementById('loginBtn').addEventListener('click', async () => {
   const email = document.getElementById('emailInput').value;
   const password = document.getElementById('passwordInput').value;
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) {
+  
+  const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+  
+  if (signInError) {
     const { error: signUpError } = await supabase.auth.signUp({ email, password });
     if (signUpError) alert("로그인/회원가입 실패: " + signUpError.message);
     else alert("회원가입 성공! 로그인되었습니다.");
+  } else {
+    alert("로그인 성공!");
   }
   checkUser();
 });
@@ -35,6 +39,7 @@ logoutBtn.addEventListener('click', async () => {
   checkUser();
 });
 
+// 사용자 체크 및 화면 전환
 async function checkUser() {
   const { data: { session } } = await supabase.auth.getSession();
   if (session) {
@@ -42,7 +47,7 @@ async function checkUser() {
     appContent.style.display = 'block';
     logoutBtn.style.display = 'block';
     fetchQuote();
-    fetchGoalsByDate(new Date().toISOString().split('T')[0]);
+    fetchGoalsByDate(document.getElementById('datePicker').value || new Date().toISOString().split('T')[0]);
   } else {
     authSection.style.display = 'block';
     appContent.style.display = 'none';
@@ -51,7 +56,7 @@ async function checkUser() {
 }
 
 async function fetchQuote() {
-  const quotes = [{ text: "시작이 반이다.", author: "아리스토텔레스" }, { text: "피할 수 없으면 즐겨라.", author: "로버트 엘리엇" }, { text: "고통 없는 승리는 영광이 없다.", author: "나폴레옹" }, { text: "오늘 할 수 있는 일을 내일로 미루지 마라.", author: "벤자민 프랭클린" }, { text: "꿈을 기록하면 꿈이 현실이 된다.", author: "작자 미상" }, { text: "성공은 매일 반복한 작은 노력들의 합이다.", author: "로버트 콜리어" }, { text: "자신을 믿어라.", author: "괴테" }, { text: "지금 이 순간에 충실하라.", author: "마르쿠스 아우렐리우스" }, { text: "열정 없이는 아무것도 이루어지지 않는다.", author: "랄프 왈도 에머슨" }, { text: "작은 일에 정성을 다하라.", author: "중용" }, { text: "가장 큰 위험은 아무 위험도 감수하지 않는 것이다.", author: "마크 저커버그" }, { text: "어제와 똑같이 살면서 다른 미래를 기대할 순 없다.", author: "아인슈타인" }, { text: "불가능은 노력하지 않는 자의 핑계다.", author: "나폴레옹" }, { text: "시련은 있어도 실패는 없다.", author: "정주영" }, { text: "천 리 길도 한 걸음부터.", author: "노자" }, { text: "행복은 습관이다.", author: "엘버트 허버드" }, { text: "도전은 삶을 흥미롭게 만든다.", author: "조슈아 마린" }, { text: "최고에 도달하려면 최저에서 시작하라.", author: "시루스" }, { text: "내일은 내일의 해가 뜬다.", author: "마거릿 미첼" }, { text: "진정한 발견은 새로운 땅을 찾는 것이 아니다.", author: "마르셀 프루스트" }, { text: "준비된 자에게 기회는 온다.", author: "루이 파스퇴르" }, { text: "인생은 속도가 아니라 방향이다.", author: "이솝" }, { text: "실패는 성공의 어머니이다.", author: "명언" }, { text: "나 자신을 아는 것이 모든 지혜의 시작이다.", author: "아리스토텔레스" }, { text: "기회는 준비된 사람에게만 찾아온다.", author: "루이 파스퇴르" }, { text: "오늘의 나를 만든 것은 어제의 나다.", author: "윈스턴 처칠" }, { text: "끈기 있는 사람이 결국 이긴다.", author: "조지 알렌" }, { text: "생각하는 대로 살지 않으면 사는 대로 생각하게 된다.", author: "폴 발레리" }, { text: "결코 포기하지 마라.", author: "윈스턴 처칠" }, { text: "빛이 있는 곳엔 반드시 그림자가 있다.", author: "작자 미상" }];
+  const quotes = [{ text: "시작이 반이다.", author: "아리스토텔레스" }, { text: "피할 수 없으면 즐겨라.", author: "로버트 엘리엇" }, { text: "고통 없는 승리는 영광이 없다.", author: "나폴레옹" }, { text: "오늘 할 수 있는 일을 내일로 미루지 마라.", author: "벤자민 프랭클린" }, { text: "꿈을 기록하면 꿈이 현실이 된다.", author: "작자 미상" }, { text: "성공은 매일 반복한 작은 노력들의 합이다.", author: "로버트 콜리어" }, { text: "자신을 믿어라.", author: "괴테" }, { text: "지금 이 순간에 충실하라.", author: "마르쿠스 아우렐리우스" }, { text: "열정 없이는 아무것도 이루어지지 않는다.", author: "랄프 왈도 에머슨" }, { text: "작은 일에 정성을 다하라.", author: "중용" }, { text: "가장 큰 위험은 아무 위험도 감수하지 않는 것이다.", author: "마크 저커버그" }, { text: "어제와 똑같이 살면서 다른 미래를 기대할 순 없다.", author: "아인슈타인" }, { text: "불가능은 노력하지 않는 자의 핑계다.", author: "나폴레옹" }, { text: "시련은 있어도 실패는 없다.", author: "정주영" }, { text: "천 리 길도 한 걸음부터.", author: "노자" }, { text: "행복은 습관이다.", author: "엘버트 허버드" }, { text: "도전은 삶을 흥미롭게 만든다.", author: "조슈아 마린" }, { text: "최고에 도달하려면 최저에서 시작하라.", author: "시루스" }, { text: "내일은 내일의 해가 뜬다.", author: "마거릿 미첼" }, { text: "진정한 발견은 새로운 땅을 찾는 것이 아니다.", author: "마르셀 프루스트" }, { text: "준비된 자에게 기회는 온다.", author: "루이 파스테르" }, { text: "인생은 속도가 아니라 방향이다.", author: "이솝" }, { text: "실패는 성공의 어머니이다.", author: "명언" }, { text: "나 자신을 아는 것이 모든 지혜의 시작이다.", author: "아리스토텔레스" }, { text: "기회는 준비된 사람에게만 찾아온다.", author: "루이 파스퇴르" }, { text: "오늘의 나를 만든 것은 어제의 나다.", author: "윈스턴 처칠" }, { text: "끈기 있는 사람이 결국 이긴다.", author: "조지 알렌" }, { text: "생각하는 대로 살지 않으면 사는 대로 생각하게 된다.", author: "폴 발레리" }, { text: "결코 포기하지 마라.", author: "윈스턴 처칠" }, { text: "빛이 있는 곳엔 반드시 그림자가 있다.", author: "작자 미상" }];
   const s = quotes[Math.floor(Math.random() * quotes.length)];
   quoteElement.innerHTML = `"${s.text}"<br><small>- ${s.author} -</small>`;
 }
@@ -60,6 +65,7 @@ flatpickr("#datePicker", { dateFormat: "Y-m-d", defaultDate: new Date(), onChang
 
 async function fetchGoalsByDate(date) {
   const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return; // 로그인 안 되어 있으면 종료
   const { data } = await supabase.from('goals').select('*').eq('created_at', date).eq('user_id', user.id).order('order_index', { ascending: true });
   allGoals = data || [];
   renderGoals();
@@ -98,6 +104,7 @@ async function deleteGoal(e, goalId) {
 goalForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
   const date = document.getElementById('datePicker').value;
   const { data, error } = await supabase.from('goals').insert([{ title: goalInput.value, category: categorySelect.value, time: timeInput.value, is_active: true, created_at: date, order_index: allGoals.length, user_id: user.id }]).select();
   if (!error) { allGoals.push(data[0]); goalInput.value = ''; renderGoals(); }
