@@ -13,7 +13,6 @@ const quoteElement = document.getElementById('quote');
 
 let allGoals = [];
 
-// 30개의 명언 데이터 적용
 async function fetchQuote() {
   if (!quoteElement) return;
   const quotes = [
@@ -79,10 +78,34 @@ function renderGoals() {
 function createGoalElement(goal) {
   const div = document.createElement('div');
   div.className = `goal-item ${goal.is_active ? '' : 'completed'}`;
-  div.innerHTML = `
-    <div class="goal-content">
-      <span class="goal-category">${goal.category} | ${goal.time || '미지정'}</span>
-      <span class="goal-title">${goal.title}</span>
-    </div>
-    <div class="action-box">
-      <span class="goal-status">${goal.is_active ? '진행
+  div.innerHTML = `<div class="goal-content"><span class="goal-category">${goal.category} | ${goal.time || '미지정'}</span><span class="goal-title">${goal.title}</span></div><div class="action-box"><span class="goal-status">${goal.is_active ? '진행 중' : '✓ 완료'}</span><button class="delete-btn">🗑️</button></div>`;
+  div.addEventListener('click', (e) => { if (!e.target.classList.contains('delete-btn')) toggleGoalStatus(goal); });
+  div.querySelector('.delete-btn').addEventListener('click', (e) => deleteGoal(e, goal.id));
+  return div;
+}
+
+async function toggleGoalStatus(goal) {
+  const { error } = await supabase.from('goals').update({ is_active: !goal.is_active }).eq('id', goal.id);
+  if (!error) {
+    allGoals = allGoals.map(g => g.id === goal.id ? { ...g, is_active: !g.is_active } : g);
+    renderGoals();
+  }
+}
+
+async function deleteGoal(e, goalId) {
+  e.stopPropagation();
+  const { error } = await supabase.from('goals').delete().eq('id', goalId);
+  if (!error) {
+    allGoals = allGoals.filter(g => g.id !== goalId);
+    renderGoals();
+  }
+}
+
+goalForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const date = document.getElementById('datePicker').value;
+  const { data, error } = await supabase.from('goals').insert([{ title: goalInput.value, category: categorySelect.value, time: timeInput.value, is_active: true, created_at: date, order_index: allGoals.length }]).select();
+  if (!error) { allGoals.push(data[0]); goalInput.value = ''; renderGoals(); }
+});
+
+document.addEventListener('DOMContentLoaded', () => { fetchQuote(); fetchGoalsByDate(new Date().toISOString().split('T')[0]); });
