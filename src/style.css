@@ -294,3 +294,46 @@ code {
     border-right-color: var(--border);
   }
 }
+/* --- 추가 및 수정된 스타일 --- */
+
+/* 액션 박스(상태 + 삭제버튼) 레이아웃 */
+.action-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 진행 중/완료 상태 박스 스타일 */
+.goal-status {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: var(--bg);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* 삭제 버튼 박스 스타일 */
+.delete-btn {
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: var(--bg) !important;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-btn:hover {
+  background-color: var(--code-bg) !important;
+}
+
+/* 완료 상태일 때의 미세한 디자인 조정 */
+.goal-item.completed .goal-status {
+  border-color: transparent;
+  color: #aaa;
+}

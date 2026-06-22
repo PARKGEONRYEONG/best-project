@@ -18,7 +18,6 @@ let allGoals = [];
 // 3. 기능 함수들
 async function fetchQuote() {
   if (!quoteElement) return;
-
   const quotes = [
     { text: "꿈을 계속 간직하고 있으면 반드시 실현할 때가 온다.", author: "괴테" },
     { text: "시작이 반이다.", author: "아리스토텔레스" },
@@ -31,11 +30,11 @@ async function fetchQuote() {
     { text: "한 번의 실패와 영원한 실패를 혼동하지 마라.", author: "스콧 피츠제럴드" },
     { text: "인생은 가까이서 보면 비극이지만, 멀리서 보면 희극이다.", author: "찰리 채플린" },
     { text: "겨울이 오면 봄이 멀지 않으리.", author: "셸리" },
-    { text: "사랑받고 싶다면 사랑하라, 그리고 사랑스럽게 행동하라.", author: "벤자민 프랭클린" },
+    { text: "사랑받고 싶다면 사랑하라, 그리고 사랑스럽게 행동하라.", author: "벤자민 프랜키린" },
     { text: "가장 어두운 밤에도 별은 빛난다.", author: "도스토옙스키" },
     { text: "성공의 비결은 목적을 향해 시종일관하는 것이다.", author: "벤자민 디즈레일리" },
     { text: "실패는 성공이라는 요리에 풍미를 더해주는 조미료다.", author: "트루먼 카포티" },
-    { text: "오늘 할 수 있는 일을 내일로 미루지 마라.", author: "벤자민 프랭클린" },
+    { text: "오늘 할 수 있는 일을 내일로 미루지 마라.", author: "벤자민 프랜키린" },
     { text: "행복은 준비된 사람의 것이다.", author: "아리스토텔레스" },
     { text: "인생은 10% 일어난 일이고, 90% 그 일에 반응하는 것이다.", author: "찰스 스윈돌" },
     { text: "당신이 할 수 있다고 믿든 할 수 없다고 믿든, 믿는 대로 될 것이다.", author: "헨리 포드" },
@@ -51,10 +50,8 @@ async function fetchQuote() {
     { text: "불가능이란 노력하지 않는 사람의 변명이다.", author: "나폴레옹" },
     { text: "끝날 때까지는 끝난 게 아니다.", author: "요기 베라" }
   ];
-
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const selectedQuote = quotes[randomIndex];
-
   quoteElement.innerHTML = `"${selectedQuote.text}"<br><small>- ${selectedQuote.author} -</small>`;
 }
 
@@ -76,29 +73,22 @@ function renderGoals() {
 function createGoalElement(goal) {
   const div = document.createElement('div');
   div.className = `goal-item ${goal.is_active ? '' : 'completed'}`;
-  
-  // 상태 표시와 삭제 버튼을 모두 포함한 UI
   div.innerHTML = `
     <div class="goal-content">
       <span class="goal-category">${goal.category || '기타'} | ${goal.time || '시간 미지정'}</span>
       <span class="goal-title">${escapeHtml(goal.title)}</span>
     </div>
-    <div style="display: flex; align-items: center; gap: 12px;">
+    <div class="action-box">
       <span class="goal-status ${goal.is_active ? 'active' : 'completed'}">
         ${goal.is_active ? '진행 중' : '✓ 완료'}
       </span>
-      <button class="delete-btn" style="background:none; border:none; cursor:pointer; font-size:18px;">🗑️</button>
+      <button class="delete-btn">🗑️</button>
     </div>
   `;
-  
-  // 완료 토글 이벤트 (삭제 버튼을 제외한 영역 클릭 시에만)
   div.addEventListener('click', (e) => {
     if (!e.target.classList.contains('delete-btn')) toggleGoalStatus(goal);
   });
-  
-  // 삭제 이벤트
   div.querySelector('.delete-btn').addEventListener('click', (e) => deleteGoal(e, goal.id));
-  
   return div;
 }
 
@@ -121,10 +111,7 @@ async function deleteGoal(event, goalId) {
 
 async function addNewGoal(title, category, time) {
   const { data, error } = await supabase.from('goals').insert([{ title, category, time, is_active: true }]).select();
-  if (error) {
-    alert('추가 실패: ' + error.message);
-    return false;
-  }
+  if (error) { alert('추가 실패: ' + error.message); return false; }
   allGoals.unshift(data[0]);
   renderGoals();
   return true;
@@ -136,15 +123,10 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-// 4. 이벤트 및 초기화
 goalForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const success = await addNewGoal(goalInput.value.trim(), categorySelect.value, timeInput.value);
-  if (success) {
-    goalInput.value = '';
-    timeInput.value = '';
-    goalInput.focus();
-  }
+  if (success) { goalInput.value = ''; timeInput.value = ''; goalInput.focus(); }
 });
 
 document.addEventListener('DOMContentLoaded', () => {
