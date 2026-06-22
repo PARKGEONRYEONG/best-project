@@ -82,3 +82,21 @@ body { margin: 0; }
 }
 
 h1, h2 { font-family: var(--heading); font-weight: 500; color: var(--text-h); }
+/* --- 완료 항목 강제 디자인 (맨 아래에 추가) --- */
+
+.goal-item.completed {
+  opacity: 0.4 !important;                /* 박스 전체를 흐리게 */
+  background-color: #f0f0f0 !important;   /* 배경색을 회색으로 */
+  border: 1px dashed #cccccc !important;  /* 테두리를 점선으로 */
+}
+
+.goal-item.completed .goal-title {
+  text-decoration: line-through !important; /* 취소선 추가 */
+  color: #888888 !important;               /* 글자색을 회색으로 */
+}
+
+.goal-item.completed .goal-status {
+  background-color: #e2e8f0 !important;
+  color: #64748b !important;
+  border-color: #cbd5e1 !important;
+}
