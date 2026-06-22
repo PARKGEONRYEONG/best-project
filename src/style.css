@@ -5,22 +5,11 @@
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
   --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
   font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
   color: var(--text);
   background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 body { margin: 0; }
@@ -34,30 +23,26 @@ body { margin: 0; }
   flex-direction: column;
 }
 
-/* --- 핵심 수정: 일정 아이템 및 박스 스타일 --- */
-.goal-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  border-bottom: 1px solid var(--border);
-  width: 100%;
-  box-sizing: border-box;
-  text-align: left;
+/* --- 핵심 디자인: 네모 박스 일정 아이템 --- */
+.goal-item { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  padding: 16px; 
+  background-color: white; 
+  border: 1px solid var(--border); 
+  border-radius: 12px; /* 네모 박스 모서리 */
+  margin-bottom: 8px; 
+  cursor: pointer; 
+  transition: all 0.2s;
 }
 
-.goal-content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
+.goal-content { display: flex; flex-direction: column; gap: 4px; }
 
-.action-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+/* 액션 버튼 박스 */
+.action-box { display: flex; align-items: center; gap: 8px; }
 
+/* 상태 버튼 (네모 형태) */
 .goal-status {
   padding: 6px 12px;
   border: 1px solid var(--border);
@@ -66,9 +51,9 @@ body { margin: 0; }
   font-weight: 600;
   background-color: var(--bg);
   cursor: pointer;
-  white-space: nowrap;
 }
 
+/* 삭제 버튼 (네모 형태) */
 .delete-btn {
   padding: 6px 10px;
   border: 1px solid var(--border);
@@ -76,58 +61,12 @@ body { margin: 0; }
   background-color: var(--bg);
   cursor: pointer;
   font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.delete-btn:hover { background-color: var(--code-bg); }
-
-.goal-item.completed .goal-title {
-  text-decoration: line-through;
-  color: #aaa;
-}
-
-.goal-item.completed .goal-status {
-  border-color: #eee;
-  color: #aaa;
-}
-
-/* 나머지 기존 레이아웃 스타일들 */
-h1, h2 { font-family: var(--heading); font-weight: 500; color: var(--text-h); }
-#center { display: flex; flex-direction: column; gap: 25px; place-content: center; place-items: center; flex-grow: 1; padding: 20px; }
-/* --- 완료된 일정 시각적 구분 디자인 --- */
-
-/* 1. 항목 전체 흐림 효과 및 배경 변경 */
+/* --- 완료된 항목 스타일 (흐림 효과) --- */
 .goal-item.completed {
-  opacity: 0.55; /* 투명도를 낮춰 흐리게 처리 */
-  background-color: #fafafa !important; /* 배경색을 아주 연한 회색으로 */
-  border-style: dashed; /* 테두리를 점선으로 바꾸어 '완료됨'을 암시 */
-  transition: opacity 0.3s ease, background-color 0.3s ease;
-}
-
-/* 2. 타이틀에 취소선 추가 */
-.goal-item.completed .goal-title {
-  text-decoration: line-through;
-  text-decoration-thickness: 1.5px;
-  color: #888; /* 글자색을 회색으로 */
-}
-
-/* 3. 완료 상태 버튼의 스타일 강조 */
-.goal-item.completed .goal-status {
-  background-color: #edf2f7 !important; /* 완료 상태는 부드러운 회색조 */
-  color: #718096 !important;
-  border-color: #cbd5e0 !important;
-}
-
-/* 4. 마우스 오버 시 살짝 밝아지게 (완료된 건 너무 흐리면 불편할 수 있어서) */
-.goal-item.completed:hover {
-  opacity: 0.8;
-}
-/* 완료된 아이템 디자인 (강제 적용) */
-.goal-item.completed {
-  opacity: 0.4 !important;
-  background-color: #f0f0f0 !important;
+  opacity: 0.5 !important;
+  background-color: #f9f9f9 !important;
   border: 1px dashed #ccc !important;
 }
 
@@ -137,7 +76,9 @@ h1, h2 { font-family: var(--heading); font-weight: 500; color: var(--text-h); }
 }
 
 .goal-item.completed .goal-status {
-  background-color: #e2e8f0 !important;
-  color: #64748b !important;
-  border-color: #cbd5e1 !important;
+  background-color: #eee !important;
+  color: #888 !important;
+  border-color: #ddd !important;
 }
+
+h1, h2 { font-family: var(--heading); font-weight: 500; color: var(--text-h); }
